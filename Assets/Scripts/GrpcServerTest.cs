@@ -1,17 +1,19 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Grpc.Core;
 using System.Threading.Tasks;
+using Truevision.Simulation;
 
 public class Simulation
 {
+    public static Simulation Instance { get; } = new Simulation();
+    
     private uint frameCount = 0;
         
-    void Tick()
+    public void Tick()
     {
         frameCount++;
+        
+        Physics.Simulate(Time.fixedDeltaTime);
     }
 }
 
@@ -25,12 +27,20 @@ public class GrpcServerTest : MonoBehaviour
     private float deltaTime = 0.0f;
     private Simulation simulation = new Simulation();
 
+    private void Awake()
+    {
+        Physics.simulationMode = SimulationMode.Script;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         server = new Server
         {
-            Services = { Helloworld.Greeter.BindService(new GrpcServiceImpl()) },
+            Services = {
+                Truevision.Hello.Greeter.BindService(new GrpcServiceImpl()),
+                Truevision.Simulation.SimulationService.BindService(new SimServiceImpl())
+            },
             Ports = { new ServerPort(Host, Port, ServerCredentials.Insecure) }
         };
 
@@ -66,13 +76,26 @@ public class GrpcServerTest : MonoBehaviour
     }
 }
 
-public class GrpcServiceImpl : Helloworld.Greeter.GreeterBase
+public class GrpcServiceImpl : Truevision.Hello.Greeter.GreeterBase
 {
-    public override Task<Helloworld.HelloReply> SayHello(Helloworld.HelloRequest request, ServerCallContext context)
+    public override Task<Truevision.Hello.HelloReply> SayHello(Truevision.Hello.HelloRequest request, ServerCallContext context)
     {
-        return Task.FromResult(new Helloworld.HelloReply
+        return Task.FromResult(new Truevision.Hello.HelloReply
         {
             Message = "Hello " + request.Name
         });
+    }
+}
+
+public class SimServiceImpl : SimulationService.SimulationServiceBase
+{
+    public override Task<TickResponse> Tick(TickRequest request, ServerCallContext context)
+    {
+        MainThreadDispatcher.ScheduleAsync(() =>
+        {
+            Simulation.Instance.Tick();
+        });
+
+        return Task.FromResult(new TickResponse());
     }
 }
