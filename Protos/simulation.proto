@@ -1,17 +1,24 @@
 syntax = "proto3";
 
-package helloworld;
+package truevision.simulation;
 
-// The greeting service definition
 service SimulationService {
-  // Sends a greeting
+
+  rpc Start (StartRequest) returns (StartResponse) {}
+
+  rpc Stop (StopRequest) returns (StopResponse) {}
+
   rpc Tick (TickRequest) returns (TickResponse) {}
+  
 }
 
-// The request message containing the user's name
-message TickRequest {}
+message StartRequest {}
+message StartResponse {}
 
-// The response message containing the greetings
+message StopRequest {}
+message StopResponse {}
+
+message TickRequest {}
 message TickResponse {}
 
 // .\protoc.exe -I . simulation.proto --csharp_out=output --grpc_out=output --plugin=protoc-gen-grpc=.\grpc_csharp_plugin.exe 
