@@ -3,8 +3,8 @@
 # Path to the Protos folder
 PROTO_PATH=../Protos
 # Output paths
-C_SHARP_OUT=../Assets/Scripts
-PYTHON_OUT=../PythonClient
+C_SHARP_OUT=../Assets/Protos
+PYTHON_OUT=../PythonClient/protos
 
 # Generate gRPC code for Python client
 python3 -m grpc_tools.protoc -I $PROTO_PATH --python_out=$PYTHON_OUT --pyi_out=$PYTHON_OUT --grpc_python_out=$PYTHON_OUT $PROTO_PATH/*.proto
