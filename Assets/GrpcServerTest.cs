@@ -9,7 +9,7 @@ public class GrpcServerTest : MonoBehaviour
     Server server;
 
     const string Host = "localhost";
-    const int Port = 88888;
+    public int Port = 8080;
 
     // Start is called before the first frame update
     void Start()
@@ -33,12 +33,12 @@ public class GrpcServerTest : MonoBehaviour
 
     private void OnDestroy()
     {
-        server.ShutdownAsync().Wait();
+        server?.ShutdownAsync().Wait();
     }
 
     private void OnApplicationQuit()
     {
-        server.ShutdownAsync().Wait();
+        server?.ShutdownAsync().Wait();
     }
 }
 
