@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package helloworld;
+
+// The greeting service definition
+service SimulationService {
+  // Sends a greeting
+  rpc Tick (TickRequest) returns (TickResponse) {}
+}
+
+// The request message containing the user's name
+message TickRequest {}
+
+// The response message containing the greetings
+message TickResponse {}
+
+// .\protoc.exe -I . simulation.proto --csharp_out=output --grpc_out=output --plugin=protoc-gen-grpc=.\grpc_csharp_plugin.exe 

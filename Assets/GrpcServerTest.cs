@@ -5,6 +5,16 @@ using UnityEngine;
 using Grpc.Core;
 using System.Threading.Tasks;
 
+public class Simulation
+{
+    private uint frameCount = 0;
+        
+    void Tick()
+    {
+        frameCount++;
+    }
+}
+
 public class GrpcServerTest : MonoBehaviour
 {
     Server server;
@@ -13,6 +23,7 @@ public class GrpcServerTest : MonoBehaviour
     public int Port = 8080;
     
     private float deltaTime = 0.0f;
+    private Simulation simulation = new Simulation();
 
     // Start is called before the first frame update
     void Start()
