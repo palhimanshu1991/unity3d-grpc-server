@@ -1,7 +1,12 @@
+using System;
+using System.IO;
 using UnityEngine;
 using Grpc.Core;
 using System.Threading.Tasks;
+using Truevision.Asset;
 using Truevision.Simulation;
+using UnityGLTF;
+using UnityGLTF.Loader;
 
 public class Simulation
 {
@@ -44,7 +49,8 @@ public class GrpcServerTest : MonoBehaviour
         {
             Services = {
                 Truevision.Hello.Greeter.BindService(new GrpcServiceImpl()),
-                Truevision.Simulation.SimulationService.BindService(new SimServiceImpl())
+                Truevision.Simulation.SimulationService.BindService(new SimServiceImpl()),
+                Truevision.Asset.AssetService.BindService(new AssetServiceImp()),
             },
             Ports = { new ServerPort(Host, Port, ServerCredentials.Insecure) }
         };
@@ -113,4 +119,65 @@ public class SimServiceImpl : SimulationService.SimulationServiceBase
             Frame = frame
         };
     }
+}
+
+public class AssetServiceImp : AssetService.AssetServiceBase
+{
+    public override async Task<LoadFromPathResponse> LoadFromPath(LoadFromPathRequest request, ServerCallContext context)
+    {
+        try
+        {
+            // Schedule and wait for the Unity main-thread task
+            await MainThreadDispatcher.ScheduleAsync(async () =>
+            {
+                // Load the GLB/GLTF file at runtime
+                await new ModelImporter().LoadGLBAsync(request.Path, Camera.main?.transform);
+            });
+
+            // Return success response
+            return new LoadFromPathResponse();
+        }
+        catch (Exception e)
+        {
+            // Debug.LogError($"Failed to load GLB file: {e}");
+
+            // Return failure response
+            return new LoadFromPathResponse();
+        }
+    }
+}
+
+public class ModelImporter
+{
+    public async Task LoadGLBAsync(string filePath, Transform parentTransform)
+    {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Debug.LogError("File path is empty or null.");
+            return;
+        }
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError($"File not found at path: {filePath}");
+            return;
+        }
+
+        var importer = new GLTFSceneImporter(filePath, new ImportOptions());
+
+        // Specify the parent transform for the loaded model
+        if (parentTransform == null)
+        {
+            parentTransform = new GameObject("GLBModelParent").transform;
+        }
+
+        // Load the model into the Unity scene
+        await importer.LoadSceneAsync(
+            -1, // Scene index (-1 for default)
+            parentTransform
+        );
+
+        Debug.Log("GLB file successfully loaded.");
+    }
+        
 }

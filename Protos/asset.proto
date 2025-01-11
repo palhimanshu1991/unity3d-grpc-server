@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package truevision.asset;
+
+service AssetService {
+
+    rpc LoadFromPath (LoadFromPathRequest) returns (LoadFromPathResponse) {}
+  
+}
+
+message LoadFromPathRequest {
+    string path = 1;
+}
+message LoadFromPathResponse {}
+
