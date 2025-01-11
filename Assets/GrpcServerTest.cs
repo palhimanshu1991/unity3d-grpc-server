@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,9 @@ public class GrpcServerTest : MonoBehaviour
     Server server;
 
     const string Host = "localhost";
-    const int Port = 88888;
+    public int Port = 8080;
+    
+    private float deltaTime = 0.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -28,17 +31,27 @@ public class GrpcServerTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Update deltaTime to calculate FPS
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+    }
 
+    private void OnGUI()
+    {
+        // Calculate FPS
+        float fps = 1.0f / deltaTime;
+
+        // Display FPS on the screen
+        GUI.Label(new Rect(10, 10, 100, 20), $"FPS: {fps:0.}");
     }
 
     private void OnDestroy()
     {
-        server.ShutdownAsync().Wait();
+        server?.ShutdownAsync().Wait();
     }
 
     private void OnApplicationQuit()
     {
-        server.ShutdownAsync().Wait();
+        server?.ShutdownAsync().Wait();
     }
 }
 

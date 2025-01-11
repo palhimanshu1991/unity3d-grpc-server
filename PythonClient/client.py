@@ -27,7 +27,7 @@ def run():
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
     print("Will try to greet world ...")
-    with grpc.insecure_channel("localhost:88888") as channel:
+    with grpc.insecure_channel("localhost:8080") as channel:
         stub = hello_pb2_grpc.GreeterStub(channel)
         position = 0
         while True:
