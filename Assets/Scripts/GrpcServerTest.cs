@@ -15,6 +15,11 @@ public class Simulation
         
         Physics.Simulate(Time.fixedDeltaTime);
     }
+
+    public uint GetFrameCounter()
+    {
+        return frameCount;
+    }
 }
 
 public class GrpcServerTest : MonoBehaviour
@@ -89,13 +94,23 @@ public class GrpcServiceImpl : Truevision.Hello.Greeter.GreeterBase
 
 public class SimServiceImpl : SimulationService.SimulationServiceBase
 {
-    public override Task<TickResponse> Tick(TickRequest request, ServerCallContext context)
+    public override async Task<TickResponse> Tick(TickRequest request, ServerCallContext context)
     {
-        MainThreadDispatcher.ScheduleAsync(() =>
+        await MainThreadDispatcher.ScheduleAsync(() =>
         {
             Simulation.Instance.Tick();
         });
 
-        return Task.FromResult(new TickResponse());
+        return new TickResponse();
+    }
+
+    public override async Task<GetFrameResponse> GetFrame(GetFrameRequest request, ServerCallContext context)
+    {
+        var frame = await MainThreadDispatcher.ScheduleAsync(() => Simulation.Instance.GetFrameCounter());
+
+        return new GetFrameResponse
+        {
+            Frame = frame
+        };
     }
 }

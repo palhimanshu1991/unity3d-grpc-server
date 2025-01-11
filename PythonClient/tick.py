@@ -24,12 +24,11 @@ import time
 def run():
     with grpc.insecure_channel("localhost:8080") as channel:
         stub = simulation_pb2_grpc.SimulationServiceStub(channel)
-        step = 0
         while True:
             response = stub.Tick(simulation_pb2.TickRequest())
-            print(step)
+            frame_response = stub.GetFrame(simulation_pb2.GetFrameRequest())
+            print(frame_response.frame)
             time.sleep(0.02)
-            step += 1
 
 
 if __name__ == "__main__":

@@ -9,6 +9,8 @@ service SimulationService {
   rpc Stop (StopRequest) returns (StopResponse) {}
 
   rpc Tick (TickRequest) returns (TickResponse) {}
+
+  rpc GetFrame (GetFrameRequest) returns (GetFrameResponse) {}
   
 }
 
@@ -20,5 +22,10 @@ message StopResponse {}
 
 message TickRequest {}
 message TickResponse {}
+
+message GetFrameRequest {}
+message GetFrameResponse {
+  uint32 frame = 1;
+}
 
 // .\protoc.exe -I . simulation.proto --csharp_out=output --grpc_out=output --plugin=protoc-gen-grpc=.\grpc_csharp_plugin.exe 
