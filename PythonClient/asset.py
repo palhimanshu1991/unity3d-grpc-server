@@ -4,7 +4,6 @@ import grpc
 import protos.asset_pb2 as asset_pb2
 import protos.asset_pb2_grpc as asset_pb2_grpc
 
-
 def run():
     with grpc.insecure_channel("localhost:8080") as channel:
         # path = "/Users/himanshu/Downloads/DamagedHelmet.glb"
