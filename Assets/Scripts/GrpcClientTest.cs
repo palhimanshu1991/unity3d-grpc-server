@@ -29,9 +29,9 @@ public class GrpcClientTest : MonoBehaviour
 
         channel = new Channel(Host + ":" + Port, ChannelCredentials.Insecure);
 
-        var client = new Helloworld.Greeter.GreeterClient(channel);
+        var client = new Truevision.Hello.Greeter.GreeterClient(channel);
 
-        var reply = client.SayHello(new Helloworld.HelloRequest { Name = "Unity" });
+        var reply = client.SayHello(new Truevision.Hello.HelloRequest { Name = "Unity" });
 
         Debug.Log("Reply: " + reply.Message);
 

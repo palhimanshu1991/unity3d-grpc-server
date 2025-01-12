@@ -16,25 +16,19 @@
 from __future__ import print_function
 
 import logging
-
 import grpc
-import protos.hello_pb2 as hello_pb2
-import protos.hello_pb2_grpc as hello_pb2_grpc
-
+import protos.simulation_pb2 as simulation_pb2
+import protos.simulation_pb2_grpc as simulation_pb2_grpc
+import time
 
 def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
-    print("Will try to greet world ...")
     with grpc.insecure_channel("localhost:8080") as channel:
-        stub = hello_pb2_grpc.GreeterStub(channel)
-        position = 0
+        stub = simulation_pb2_grpc.SimulationServiceStub(channel)
         while True:
-            response = stub.SayHello(hello_pb2.HelloRequest(name="you"))
-            print("Greeter client received: " + response.message)
-            print(position)
-            position += 1
+            response = stub.Tick(simulation_pb2.TickRequest())
+            frame_response = stub.GetFrame(simulation_pb2.GetFrameRequest())
+            print(frame_response.frame)
+            time.sleep(0.02)
 
 
 if __name__ == "__main__":

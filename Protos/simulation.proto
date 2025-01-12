@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package truevision.simulation;
+
+service SimulationService {
+
+  rpc Start (StartRequest) returns (StartResponse) {}
+
+  rpc Stop (StopRequest) returns (StopResponse) {}
+
+  rpc Tick (TickRequest) returns (TickResponse) {}
+
+  rpc GetFrame (GetFrameRequest) returns (GetFrameResponse) {}
+  
+}
+
+message StartRequest {}
+message StartResponse {}
+
+message StopRequest {}
+message StopResponse {}
+
+message TickRequest {}
+message TickResponse {}
+
+message GetFrameRequest {}
+message GetFrameResponse {
+  uint32 frame = 1;
+}
+
+// .\protoc.exe -I . simulation.proto --csharp_out=output --grpc_out=output --plugin=protoc-gen-grpc=.\grpc_csharp_plugin.exe 

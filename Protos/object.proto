@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package truevision.object;
+
+service ObjectService {
+  
+  rpc GetObjectByPath(GetObjectByPathRequest) returns (GetObjectByPathResponse) {}
+
+}
+
+message GetObjectByPathRequest {
+  string path = 1;
+}
+message GetObjectByPathResponse {}
+
